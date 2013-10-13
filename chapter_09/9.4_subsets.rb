@@ -5,12 +5,6 @@
 #   Sets are implemented with arrays for this exercise.
 #   Mathematically speaking, the empty set is always a subset.
 #   It's not included in these results, but can be trivially added.
-#   Note: the methods ignore repeated elements in the initial set:
-#         i.e., {a,a,c} yields only {a},{c},{a,c}
-#   This could be handled by first adding a distinguishing mark to
-#   each element, such as making {a,a} => {a,a'}, and then removing
-#   the distinguishing marks at the end of the algorithm or by 
-#   implementing a different algorthim, such as is done in CtCI.
 #
 #   Implementations
 #   ---------------
@@ -26,7 +20,7 @@
 
 class Subsets
   def initialize set
-    @set = set
+    @set = set.uniq
   end
   def return_subsets
     @result ||= []
