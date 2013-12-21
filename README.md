@@ -2,6 +2,8 @@
 
 Ruby solutions to various questions in the "Cracking the Coding Interview" book by Gayle Laakmann McDowell.
 
+Also included are other puzzles given to me on coding intervews and/or ones that I just found interesting.
+
 ##Running the tests
 
 You can run the tests for each individual exercise as follows:
