@@ -18,7 +18,6 @@ def is_permutation?(a,b)
   aa = a.split ""
   ba = b.split ""
   return false if b.size > a.size
-  puts "#{aa}, #{ba}"
   ba.each do |f|
     return false if ! aa.include?(f)
   end
