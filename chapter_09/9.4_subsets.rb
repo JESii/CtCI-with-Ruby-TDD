@@ -17,6 +17,8 @@
 #   Rather than the 'additive' approach used in CtCI, I instead use what I'll
 #   call a 'reductive' approach in that I start with the full set and repeatedly
 #   remove an element from the candidate set, capturing subsets along the way.
+# 
+# NOTE: An alternative solution can be found in 9.4a_subsets.rb
 
 class Subsets
   def initialize set

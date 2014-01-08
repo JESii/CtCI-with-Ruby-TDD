@@ -92,7 +92,6 @@ class LinkedList
   end
   def remove_node(node)
     #CtCI2.3 - Delete (isolated) node in middle of list
-    puts "remove_node: #{self.inspect}"
     raise "Can't remove isolated last node" if node.next.nil?
     node.data = node.next.data
     node.next = node.next.next

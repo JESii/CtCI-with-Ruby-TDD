@@ -38,7 +38,6 @@ class MyMatrix
       jj = c - j - 1
       result[j] << m[i][jj]
     end
-    puts "jth row: #{j}; #{pp result[j]}"
   end
   result
   end
