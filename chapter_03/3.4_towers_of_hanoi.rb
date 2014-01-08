@@ -74,14 +74,15 @@ class Towers
     biggest = index = 0
     @towers.each_with_index do |e,i|
       next if e[0] == 1
+      index = i
       if e[0].nil?
         index = i
         break
       end
-      if e[0] > biggest
-        biggest = e[0]
-        index = i
-      end
+#      if e[0] > biggest
+#        biggest = e[0]
+#        index = i
+#      end
     end
     index
   end
@@ -91,13 +92,14 @@ class Towers
     @towers.each_with_index do |e,i|
       next if e[0] == 1
       next if e[0].nil?
-      if e[0] < smallest[0]
-        smallest = e
+      if e[0] < smallest
+        smallest = e[0]
         index = i
       end
     end
     index
   end
+  # move routine uses array indexes, not tower positions
   def move(from,to)
     @towers[to].unshift @towers[from].shift
   end
@@ -160,7 +162,7 @@ describe "TowersOfHanoi" do
       expect(towers.display_raw).to eql [[3],[2],[1]]
       towers.move_left(3)
       towers.move_left(2)
-      towers.move_right(3)
+      towers.move_next
       expect(towers.display_raw).to eql [[1,3],[],[2]]
     end
     it "can 'bounce' the 1 from left to right" do
