@@ -107,6 +107,9 @@ class Towers
   def bounce_left
     move(2,0)
   end
+  def solve?
+    false
+  end
 end
 
 class TowersOfHanoi
@@ -155,6 +158,10 @@ describe "TowersOfHanoi" do
       towers.move_right(2)
       towers.move_next()
       expect(towers.display_raw).to eql [[3],[2],[1]]
+      towers.move_left(3)
+      towers.move_left(2)
+      towers.move_right(3)
+      expect(towers.display_raw).to eql [[1,3],[],[2]]
     end
     it "can 'bounce' the 1 from left to right" do
       towers = Towers.new(3)
@@ -167,6 +174,24 @@ describe "TowersOfHanoi" do
       towers.move_next
       towers.bounce_left
       expect(towers.display_raw).to eql [[1,3],[2],[]]
+    end
+    it "detects a winning position" do
+      towers = Towers.new(3)
+      towers.bounce_right
+      towers.move_next
+      puts "#{towers.display_raw}"
+      expect(towers.solve?).to be_false
+      towers.bounce_left
+      towers.move_next
+      puts "#{towers.display_raw}"
+      expect(towers.solve?).to be_false
+      towers.bounce_right
+      towers.move_next
+      puts "#{towers.display_raw}"
+      towers.bounce_left
+      towers.move_next
+      puts "#{towers.display_raw}"
+      expect(towers.solve?).to be_true
     end
   end
 end
