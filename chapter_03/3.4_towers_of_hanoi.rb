@@ -1,47 +1,22 @@
 # CtCI 3.4
 #   "Implement a method to solve the Towers on Hanoi
 #   Assume 3 towers (pegs)
-### TODO: In-progress
-# Patterns that solve the game
-# 1. Unstack until the largest disk is on tower #2
-#    - tower #2 is empty and tower #3 has all other disks
-#    - noted as position (*) below
-# 2. Restack disks until on tower #2
-#    - conceptually a 'reverse' of the previous moves
-# - Moves are made in groups of three where 3ach group has three moves
-# - Eeach group moves the 'top' disk left or right two places
-#   and then moves one other disk into an open space
-#   Thus, the #1RRxx or #1LLxx pattern
-# Hmmm: is it as simple as bounce the smaller and make the ONLY move possible?
-# 3-disks
-# #1RR#1R | #3LL#2R | #1RR#1R  => [[],[3],[1,2]] (*)
-# | #3LL#3L | #1R
-# 4-disks
-# #1RR#1R | #3LL#2R | #1RR#1R 
-# #3LL#3L | #1RR#2L | #3LL#2R => [[1,2,4],[],[3]] (1)
-# #1RR#1R | #3LL#2R | #1RR#1R => [[],[4],[1,2,3]] (*)
-# #3LL#3L | #1RR#2L | #1LL#3L => [[1,2],[3,4],[]]
-# #1RR#1R | #3L
-# 5-disks
-# #1RR#1R | #3LL#2R | #1RR#1R 
-# #3LL#3L | #1RR#2L | #3LL#2R => [[1,2,4,5],[],[3]] (2)
-# #1RR#1R | #3LL#2R | #1RR#1R => [[5],[4],[1,2,3]] 
-# #3LL#3L | #1RR#2L | #3LL#3L => [[1,2,5],[3,4],[]]
-# #1RR#1R | #3LL#2R | #1RR#2L => [[3,5],[4],[1,2]]
-# #1LL#3L | #1RR#2L | #1LL#2R => [[1,2,3,5],[],[4]] (1)
-# ... 9 more groups of 3      => [[],[5],[1.2.3.4]] (*)
+# 
+# Examine the moves in detail and there are lots of mini-patterns,
+# but the algorithm to solve any game is deceptively simple:
+# 1. "bounce" the smallest disk all the way to right
+# 2. make the ONLY move possible
+# 3. "bounce" the smallest disk all the way to left
+# 4. make the only move possible
+# 5. repeat 1-4, testing for a solvable positions before every "make the only..."
+# 6. "solvable" positions have [1] and [2] on first/third towers
 
 puts "==================Towers of Hanoi===================="
 
 require 'spec_helper'
 
-#TODO: Add methods to the Towers class?
-#     can_move_{right/left}?  - see if the move is valid
-#     move                    - make the next available move
-#     is_done?                - have we completed the tower move?
-#     ???more???
-
 class Towers
+
   def initialize(height)
     @height = height
     @towers = Array.new(3) {Array.new}
@@ -74,18 +49,18 @@ class Towers
     biggest = index = 0
     @towers.each_with_index do |e,i|
       next if e[0] == 1
-      index = i
       if e[0].nil?
         index = i
         break
       end
-#      if e[0] > biggest
-#        biggest = e[0]
-#        index = i
-#      end
+      if e[0] > biggest
+        biggest = e[0]
+        index = i
+      end
     end
     index
   end
+
   def smallest
     smallest = 99999
     index = 0
@@ -99,101 +74,155 @@ class Towers
     end
     index
   end
+
   # move routine uses array indexes, not tower positions
   def move(from,to)
     @towers[to].unshift @towers[from].shift
   end
+  
   def bounce_right
     move(0,2)
   end
+
   def bounce_left
     move(2,0)
   end
-  def solve?
-    false
+
+  def solved?
+    if @towers[0].size == 1 && @towers[2].size == 1
+      test = []
+      test << @towers[0][0] << @towers[2][0]
+      test.sort!
+      if test == [1,2]
+        move_next
+        move_one_and_done
+        true
+      end
+    else
+      false
+    end
+  end
+
+  def move_one_and_done
+    if @towers[0].empty?
+      move(2,1)
+    else
+      move(0,1)
+    end
   end
 end
 
 class TowersOfHanoi
+
   def initialize(height)
     @height = height
-    @game = Towers.new(3)
+    @game = Towers.new(height)
   end
 
   def display_raw
     @game.to_raw
   end
+
+  def solve
+    while 1
+      @game.bounce_right
+      break if @game.solved?
+      @game.move_next
+      @game.bounce_left
+      break if @game.solved?
+      @game.move_next
+    end
+  end
 end
 
 describe "TowersOfHanoi" do
+
   it "displays the current position" do
     toh = TowersOfHanoi.new(3)
     expect(toh.display_raw).to eql([[1,2,3],[],[]])
   end
 
-  describe "Towers game board" do
+  it "solves the puzzle using the alorithm" do
+    toh = TowersOfHanoi.new(4)
+    toh.solve
+    expect(toh.display_raw).to eql [[],[1,2,3,4],[]]
+  end
+end
 
-    it "uses a Game 'board'" do
-      towers = Towers.new(3)
-      expect(towers.display_raw).to eql([[1,2,3],[],[]])
-    end
+describe "Towers game board" do
 
-    it "can move an item to the right" do
-      towers = Towers.new(3)
-      towers.move_right(1)
-      expect(towers.display_raw).to eql [[2,3],[1],[]]
-    end
+  it "uses a Game 'board'" do
+    towers = Towers.new(3)
+    expect(towers.display_raw).to eql([[1,2,3],[],[]])
+  end
 
-    it "can move an item to the left" do
-      towers = Towers.new(3)
-      towers.move_right(1)
-      towers.move_right(2)
-      towers.move_right(1)
-      expect(towers.display_raw).to eql [[3],[2],[1]]
-      towers.move_left(3)
-      expect(towers.display_raw).to eql [[3],[1,2],[]]
-    end
+  it "can move an item to the right" do
+    towers = Towers.new(3)
+    towers.move_right(1)
+    expect(towers.display_raw).to eql [[2,3],[1],[]]
+  end
 
-    it "makes the next available move" do
-      towers = Towers.new(3)
-      towers.move_right(1)
-      towers.move_right(2)
-      towers.move_next()
-      expect(towers.display_raw).to eql [[3],[2],[1]]
-      towers.move_left(3)
-      towers.move_left(2)
-      towers.move_next
-      expect(towers.display_raw).to eql [[1,3],[],[2]]
-    end
-    it "can 'bounce' the 1 from left to right" do
-      towers = Towers.new(3)
-      towers.bounce_right
-      expect(towers.display_raw).to eql [[2,3],[],[1]]
-    end
-    it "can 'bounce' the 1 from right to left" do
-      towers = Towers.new(3)
-      towers.bounce_right
-      towers.move_next
-      towers.bounce_left
-      expect(towers.display_raw).to eql [[1,3],[2],[]]
-    end
-    it "detects a winning position" do
-      towers = Towers.new(3)
-      towers.bounce_right
-      towers.move_next
-      puts "#{towers.display_raw}"
-      expect(towers.solve?).to be_false
-      towers.bounce_left
-      towers.move_next
-      puts "#{towers.display_raw}"
-      expect(towers.solve?).to be_false
-      towers.bounce_right
-      towers.move_next
-      puts "#{towers.display_raw}"
-      towers.bounce_left
-      towers.move_next
-      puts "#{towers.display_raw}"
-      expect(towers.solve?).to be_true
-    end
+  it "can move an item to the left" do
+    towers = Towers.new(3)
+    towers.move_right(1)
+    towers.move_right(2)
+    towers.move_right(1)
+    expect(towers.display_raw).to eql [[3],[2],[1]]
+    towers.move_left(3)
+    expect(towers.display_raw).to eql [[3],[1,2],[]]
+  end
+
+  it "makes the next available move" do
+    towers = Towers.new(3)
+    towers.move_right(1)
+    towers.move_right(2)
+    towers.move_next()
+    expect(towers.display_raw).to eql [[3],[2],[1]]
+    towers.move_left(3)
+    towers.move_left(2)
+    towers.move_next
+    expect(towers.display_raw).to eql [[1,3],[],[2]]
+  end
+
+  it "can 'bounce' the 1 from left to right" do
+    towers = Towers.new(3)
+    towers.bounce_right
+    expect(towers.display_raw).to eql [[2,3],[],[1]]
+  end
+
+  it "can 'bounce' the 1 from right to left" do
+    towers = Towers.new(3)
+    towers.bounce_right
+    towers.move_next
+    towers.bounce_left
+    expect(towers.display_raw).to eql [[1,3],[2],[]]
+  end
+
+  it "detects a winning position" do
+    towers = Towers.new(3)
+    towers.bounce_right
+    towers.move_next
+    expect(towers.solved?).to be_false
+    towers.bounce_left
+    towers.move_next
+    expect(towers.solved?).to be_false
+    towers.bounce_right
+    towers.move_next
+    towers.bounce_left
+    expect(towers.solved?).to be_true
+  end
+
+  it "makes next move with larger tower" do
+    t = Towers.new(4)
+    t.bounce_right
+    t.move_next
+    expect(t.display_raw).to eql [[3, 4], [2], [1]]
+    t.bounce_left
+    t.move_next
+    expect(t.display_raw).to eql [[1, 3, 4], [], [2]]
+    t.bounce_right
+    expect(t.display_raw).to eql [[3, 4], [], [1,2]]
+    t.move_next
+    expect(t.display_raw).to eql [[4], [3,], [1,2]]
   end
 end
