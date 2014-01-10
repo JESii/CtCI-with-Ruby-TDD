@@ -1,14 +1,24 @@
 # CtCI 3.4
 #   "Implement a method to solve the Towers on Hanoi
-#   Assume 3 towers (pegs)
 # 
+# Development/TDD:
+# I decided to leave this in an unfinished state in that I haven't
+# done any refactoring. This could be useful to other folks to see how
+# TDD sometimes goes. I started off with simple methods such as #move_left
+# and #move_right. However, as I progressed and learned more about how the
+# game worked, these methods became superfluous. Refactoring would remove
+# these methods (and probably others as well), along with the supporting
+# specs.
+# 
+# Algorithm:
 # Examine the moves in detail and there are lots of mini-patterns,
+#   (guaranteed to throw you off-track for a bit)
 # but the algorithm to solve any game is deceptively simple:
 # 1. "bounce" the smallest disk all the way to right
 # 2. make the ONLY move possible
 # 3. "bounce" the smallest disk all the way to left
 # 4. make the only move possible
-# 5. repeat 1-4, testing for a solvable positions before every "make the only..."
+# 5. repeat 1-4, testing for a solvable position before every "make the only..."
 # 6. "solvable" positions have [1] and [2] on first/third towers
 
 puts "==================Towers of Hanoi===================="
