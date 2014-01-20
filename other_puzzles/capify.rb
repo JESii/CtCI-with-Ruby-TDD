@@ -22,6 +22,8 @@ puts "=========capify============"
 describe 'capify a string' do
   it "handles a string of length 1" do
     capify('a').should =~ ['a','A']
+    expect(capify('a')).to match_array ['a', 'A']
+    expect(capify('a')).to match_array ['A', 'a']
   end 
   it "handles a string of length 2" do
     capify('ab').should =~ %w{ab Ab aB AB}
