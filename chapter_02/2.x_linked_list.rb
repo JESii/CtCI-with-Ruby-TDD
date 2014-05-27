@@ -39,12 +39,21 @@ class LinkedList
     @head = node
     @head.next = ntemp
   end
+  def get_first
+    @head.next
+  end
+  def get_last
+    niter = @head
+    niter = niter.next while niter.next != nil
+    niter
+  end
   def addLast(node)
     #Add a node at the end of the list
     #For now, we simply interate through the list...
     niter = @head
     niter = niter.next while niter.next != nil
-    niter.next = Node.new(node.data,node.next)
+    niter.next = node
+    # niter.next = Node.new(node.data,node.next)
   end
   def insertAfter
     #Insert the node after the given location
@@ -156,6 +165,7 @@ describe LinkedList do
     expect(llist.head.data).to eq "linked item #2"
     expect(llist.head.next.data).to eq "test4"
   end
+
   describe "handles multiple elements" do
     before(:each) do
       @llist = LinkedList.new("head")
@@ -205,6 +215,7 @@ describe LinkedList do
       @llist.addLast(Node.new("four"))
       @llist.addLast(Node.new("five"))
       @llist.addLast(Node.new("six"))
+      @llist.recursive_print
       node = @llist.find_kth_from_last(2)
       expect(node.data).to eq "five"
     end
@@ -221,4 +232,29 @@ describe LinkedList do
       expect(@llist.recursive_print).to eq "head > one > three"
     end
   end
+
+  describe "define get_first & get_last methods" do
+    before(:each) do
+      @list = LinkedList.new("head")
+      puts @list.recursive_print
+      @list.addLast(Node.new("one"))
+      puts @list.recursive_print
+      @list.addLast(Node.new("two"))
+      puts @list.recursive_print
+      @list.addLast(Node.new("three"))
+      puts @list.recursive_print
+    end
+
+    it "returns the first node on the list using get_first" do
+      node = @list.get_first
+      expect(node.data).to eql "one"
+    end
+
+    it "returns the last node on the list using get_last" do
+      @list.recursive_print
+      node = @list.get_last
+      expect(node.data).to eql "three"
+    end
+  end
+
 end
