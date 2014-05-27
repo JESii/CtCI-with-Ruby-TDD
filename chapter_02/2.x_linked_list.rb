@@ -9,9 +9,14 @@ class Node
   attr_accessor :data
   attr_accessor :next
 
-  def initialize(data,link=nil)
+  def initialize(data,link=nil,options={})
     @data = data
     @next = link
+    return if options.nil?
+    options.each do |key,value|
+      self.class.class_eval { attr_accessor key }
+      instance_variable_set("@#{key}", value)
+    end
   end
 end
 
@@ -139,11 +144,25 @@ end
 
 require'spec_helper'
 
+puts "============ specs =============="
+
 describe Node do
   it "is properly initialized" do
     node = Node.new("test",nil)
     expect(node.data).to eq "test"
     expect(node.next).to eq nil
+  end
+
+  it "accepts an optional attribute" do
+    node = Node.new("test",nil,:color => "blue")
+    expect(node.color).to eql "blue"
+  end
+
+  it "accepts multiple optional attributes" do
+    node = Node.new("test",nil,:color => 'red', :xpos => 5, :ypos => 0.5)
+    expect(node.color).to eql "red"
+    expect(node.xpos).to eql 5
+    expect(node.ypos).to eql 0.5
   end
 end
 describe LinkedList do
