@@ -5,7 +5,7 @@
 puts "Start of LinkedList program"
 puts "Interface based on http://www.cs.cmu.edu/~adamchik/15-121/lectures/Linked%20Lists/linked%20lists.html"
 
-class Node
+module  NodeModule
   attr_accessor :data
   attr_accessor :next
 
@@ -19,8 +19,11 @@ class Node
     end
   end
 end
+class Node
+  include NodeModule
+end
 
-class LinkedList
+module LinkedListModule
   def initialize(data, link=nil)
     @head = Node.new(data,link)
   end
@@ -141,8 +144,11 @@ class LinkedList
     #Return true/false if the node exists
   end
 end
+class LinkedList
+  include LinkedListModule
+end
 
-require'spec_helper'
+# require'spec_helper'
 
 puts "============ specs =============="
 
