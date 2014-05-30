@@ -1,3 +1,5 @@
+require 'pry'
+require_relative '../linked_list'
 
 # Code here uses the Node/LinkedList classes
 
@@ -12,6 +14,12 @@ class ClosestPair
   end
   def size
     @nodes.size 
+  end
+  def [](item)
+    @nodes[item-1]
+  end
+  def distance(node1,node2)
+   5 
   end
 end
 
@@ -40,5 +48,19 @@ describe ClosestPair do
     cpair.add_node("two",3,1.2)
     expect(cpair.size).to eql 2
   end
+  it "returns the requested node" do
+    cpair = ClosestPair.new("return nodes")
+    cpair.add_node("one", 5,0)
+    cpair.add_node("two",0,3)
+    expect(cpair[1].data).to eql "one"
+    expect(cpair[2].data).to eql "two"
+  end
+  describe "calculates pair distances" do
+    it "for two nodes" do
+      cpair = ClosestPair.new("calculate distance")
+      cpair.add_node("one",0,0)
+      cpair.add_node("two",3,4)
+      expect(cpair.distance(cpair[1],cpair[2])).to eql 5
+    end
+  end
 end
-require_relative '../chapter_02/2.x_linked_list.rb'

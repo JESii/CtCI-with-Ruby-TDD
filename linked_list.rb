@@ -1,10 +1,148 @@
 # CtCi 2.x
 #   Create a linked-list class and test it
-#   Used for CtCI Chapter 2 problems... and others
-#
+# =>Used for CtCI Chapter 2 problems...
+
+puts "Start of LinkedList program"
+puts "Interface based on http://www.cs.cmu.edu/~adamchik/15-121/lectures/Linked%20Lists/linked%20lists.html"
+
+class Node
+  attr_accessor :data
+  attr_accessor :next
+
+  def initialize(data,link=nil,options={})
+    @data = data
+    @next = link
+    return if options.nil?
+    options.each do |key,value|
+      self.class.class_eval { attr_accessor key }
+      instance_variable_set("@#{key}", value)
+    end
+  end
+end
+
+class LinkedList
+  def initialize(data, link=nil)
+    @head = Node.new(data,link)
+  end
+  def head()
+    return @head
+  end
+  def linked_list(value, cell)
+    return Node.new(value, cell)
+  end
+  def recursive_print(node=@head)
+    #Prints from the specified node; defaults to the head node
+    if node.next == nil then
+      return node.data
+    else
+      return node.data + ' > ' + recursive_print(node.next) 
+    end
+  end
+  def addFirst(node)
+    #Add a node at the beginning of the list
+    ntemp = @head
+    @head = node
+    @head.next = ntemp
+  end
+  def get_first
+    @head.next
+  end
+  def get_last
+    niter = @head
+    niter = niter.next while niter.next != nil
+    niter
+  end
+  def addLast(node)
+    #Add a node at the end of the list
+    #For now, we simply interate through the list...
+    niter = @head
+    niter = niter.next while niter.next != nil
+    niter.next = node
+    # niter.next = Node.new(node.data,node.next)
+  end
+  def insertAfter
+    #Insert the node after the given location
+  end
+  def insertBefore
+    #Insert the node before the given location
+  end
+  def remove(data)
+    #Find the node containing the data value and delete it
+    niter = @head
+    while niter.data != data
+      return false if niter.next.nil?
+      piter = niter
+      niter = niter.next
+    end
+    piter.next = niter.next
+    return true
+  end
+  def find(data)
+    niter = @head
+    while niter.data != data
+      return nil if niter.next.nil?
+      niter = niter.next
+    end
+    return niter
+  end
+  def remove_dups()
+    # Approach: scan list; keep found items in hash; check and delete if seen again
+    # Approach: sort list and then scan; only need to keep most recent item in memory
+    found = {}
+    niter = self.head
+    while niter.next != nil
+      if found[niter.data].nil? then
+        found[niter.data] = 1    # count occurrences
+        niter = niter.next
+      else
+        # Delete an 'isolated' node in a linked list
+        # ...Simply replace this node with next and delete next
+        # (CtCI2.3; had to peek at solution)
+        found[niter.data] += 1
+        niter.data = niter.next.data
+        niter.next = niter.next.next
+      end
+    end
+  end
+  def remove_node(node)
+    #CtCI2.3 - Delete (isolated) node in middle of list
+    raise "Can't remove isolated last node" if node.next.nil?
+    node.data = node.next.data
+    node.next = node.next.next
+  end
+  def remove_kth_from_last(k)
+    #Approach: starter = find kth item; save head as kth_pointer
+    #          performer = index through list, increment kth_pointer in tandem
+    node = self.find_kth_from_last(k)
+    self.remove_node(node)
+  end
+  def find_kth_from_last(k)
+    kth_pointer = niter = self.head
+    i = 1
+    while i < k do    ### starter function
+      niter = niter.next
+      i += 1
+    end
+    while niter.next != nil do
+      niter = niter.next
+      kth_pointer = kth_pointer.next
+    end
+    #kth_pointer.data = kth_pointer.next.data
+    #kth_pointer.next = kth_pointer.next.next
+    kth_pointer
+  end
+  def copy
+    #Clone the whole list
+  end
+  def clear
+    #Set the whole list to a pristine state
+  end
+  def included?
+    #Return true/false if the node exists
+  end
+end
 
 require'spec_helper'
-require_relative '../linked_list'
 
 puts "============ linkedlist specs =============="
 
