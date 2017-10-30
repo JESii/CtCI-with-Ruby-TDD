@@ -19,6 +19,7 @@
 #    First+i R = Last-j C (for all j columns)
 
 require'spec_helper'
+require 'pp'
 
 class MyMatrix
   def self.build(r,c, &block)
